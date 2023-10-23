@@ -1,0 +1,5 @@
+machine "Gradiente_Expert_Plus"
+ext DDX_3.0
+ext rs232
+diska dsk/dska/.
+set sound_driver null
