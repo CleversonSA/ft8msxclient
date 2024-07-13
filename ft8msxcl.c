@@ -63,11 +63,10 @@ void parseFT8RecData(unsigned char*, unsigned int);
 void beep();
 void clearLineStatus();
 
-
 //*******************************************************
 // MAIN
 //*******************************************************
-void main(void) 
+int main(char** argv, int argc) 
 {
   char ucTxData = 0; //where our key inputs go
 	unsigned char ucRet; //return of functions
@@ -84,18 +83,32 @@ void main(void)
   {
     Print("** NO TCP STACK FOUND **\n\r");
     Print("Please start TCP stack first\n\r");
-    return;
+    return -1;
   }
 
-  strcpy(ucServer,"169.254.2.104");
-  strcpy(ucPort,"6666");
+
+	if (argc == 0) {
+  	strcpy(ucServer,"ft8pi.local");
+	}	
+
+	if (argc != 0) {
+		strcpy(ucServer,(unsigned char*)argv[0]);
+  	strcpy(ucPort,(unsigned char*)argv[1]);
+	} else {
+		strcpy(ucPort,"6666");
+	}
+
+	Print("Trying connection...");
+	Print(ucServer);
+	Print(ucPort);
+
   ucRet = OpenSingleConnection (ucServer, ucPort, &ucConnNumber);
 
   if (ucRet != ERR_OK && IsConnected(ucConnNumber) == '0')
   {
     Print("** CONNECTION FAILED **\n\r");
     Print("Server was not found, check conectivity and try again!\n\r");
-    return;
+    return -1;
   }
 
   Print("\r\n** CONNECTED, PRESS ANY KEY TO START **\r\n");
@@ -157,7 +170,7 @@ void main(void)
 
   CloseConnection(ucConnNumber);
 
-  return;
+  return 0;
 }
  
 
@@ -175,8 +188,8 @@ void prepareScreen()
 {
   Cls();
   //       1234567890123456789012345678901234567890
-  Print("\fFT8MSXClient                        v0.3\r\n");
-  Print(  "----------------------------------------\r\n");
+  Print("\fFT8MSXClient                    v0.4\r\n");
+  Print(  "------------------------------------\r\n");
 }
 
 

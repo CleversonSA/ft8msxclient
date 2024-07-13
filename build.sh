@@ -96,7 +96,7 @@ export DEFAULT_EXTENSION=COM
   #-- Print on concole the full compilation command line (for controle or debug purpose) 1:Medium 2:Full  0:deactivated
 export DEFAULT_VERBOSE=2
   # -- Which version of MSX-DOS to use.  1:MSX-DOS1   2:MSX-DOS2  0:Do not change current MSXDOS file in Destination folder
-export DEFAULT_MSXDOS=1
+export DEFAULT_MSXDOS=2
   # -- Set The default ROM size, in case of compiling a ROM
 export DEFAULT_ROMSIZE_VAR="8000"
   # -- Set the Default CRT0 for ROM, in case of compiling a ROM
@@ -334,10 +334,10 @@ if [ "${EXTENSION}" = "ROM" ];
 then 
     # pre-compilation
     sdcc -c -mz80 ${prog}.c -I ${HEADER_DIR} 
-    CCFLAGS="-o ${prog}.ihx --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.rel"
+    CCFLAGS="-o ${prog}.ihx --sdcccall 0 --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.rel"
     CARTRIDGE_SLOT_A=" -carta ${DEST}${prog}.${EXTENSION}"
 else
-    CCFLAGS="--code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.c"
+    CCFLAGS="--sdcccall 0 --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.c"
 fi
 
 echo "[1/5]... ${CC} is Processing '$1' ... "
@@ -396,6 +396,10 @@ fi
 echo "[3b/5]... Copying ${prog}.${EXTENSION} to ${DEST}"
 
 cp -f ${prog}.${EXTENSION}  ${DEST}
+
+echo "[3b/6]... Copying ${prog}.${EXTENSION} to ./dist"
+
+cp -f ${prog}.${EXTENSION}  ./dist
 
 echo "[4/5]... Removing temps files..."
 if [ "${OUT_SAVE}" = "1" ];

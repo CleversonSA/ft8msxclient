@@ -60,17 +60,17 @@ export MSX_MACHINE_SCRIPT_PATH=openMSX/MSX_config/
   #-- Where to save compilation temps files (may be usefull for debugging)
 export OUT_DIR=$PARRENT_DIR/out/  
   #-- Where to find .rel files to include during compilation
-export INCLUDE_DIR=$CURRENT_DIR/fusion-c/include/
+export INCLUDE_DIR=$CURRENT_DIR/include/
   #-- Where to find Fusion-c's definition files (.h)
-export HEADER_DIR=$CURRENT_DIR/fusion-c/header/
+export HEADER_DIR=$CURRENT_DIR/header/
   #-- Where to find the Dynamic Library
-export LIB_DIR=$CURRENT_DIR/fusion-c/lib/
+export LIB_DIR=$CURRENT_DIR/lib/
   #-- The Name of the default Library file
 export LIB_FILE=fusion.lib
   #-- The Name of the default peep-hole file optimizer
-export PEEP_FILE=$CURRENT_DIR/fusion-c/ib/peep.def
+export PEEP_FILE=$CURRENT_DIR/lib/peep.def
   # -- DefaultMSWODS Stock Dir
-export MSXDOS_DIR=$CURRENT_DIR/fusion-c/source/
+export MSXDOS_DIR=$CURRENT_DIR/source/
   # -- Default CRT0 ton use
 export DEFAULT_CRT0="${INCLUDE_DIR}crt0_msxdos.rel"
   # -- Default Code Address (sdcc parameter)
@@ -80,7 +80,7 @@ export DEFAULT_ADDR_DATA="0x0"
   # -- Default compilation Priority
 export DEFAULT_PRIO="--opt-code-size"
   # -- Default openMSX Script machine to start at the end of compilation. 0:nothing  1:MSX1  2:MSX2  3:MSX2+  4:TurboR  5:MSX2-HD. 6:MSX2+HD  7:TurboR-HD
-export DEFAULT_MSXVER=1
+export DEFAULT_MSXVER=2
   # -- Write Autoexec.bat to the destination with the compiled program. 1:Yes  2: No
 export DEFAULT_AUTOEXEC=1
   # -- Default destination folder for the compiled program
@@ -126,7 +126,7 @@ fi
 #export INC2="$(INCLUDE_DIR)"
 #export INC3="$(INCLUDE_DIR)"
 #export INC4="$(INCLUDE_DIR)"
-#export INC5="$(INCLUDE_DIR)"cp -rp * ../../salutonMondoMSX/
+#export INC5="$(INCLUDE_DIR)"
 #export INC6="$(INCLUDE_DIR)"
 #export INC7="$(INCLUDE_DIR)"
 #export INC8="$(INCLUDE_DIR)"
@@ -166,7 +166,7 @@ then
     ROMSIZE_Identifier="__SDK_ROMSIZE__"
 
     OPTIMIZATION_VAR=`cat $1 |tr -s ' ' | grep "\#define ${OPTIMIZATION_Identifier}" | cut -d" " -f 3  | tr -d '\r\n,'`
-    MSXVER_VAR=`cat $1 | tr -s ' ' | grep "\#define ${MSXVERSION_IdentifierMSXVER_VAR}" | cut -d" " -f 3 | tr -d '\r\n,'`
+    MSXVER_VAR=`cat $1 | tr -s ' ' | grep "\#define ${MSXVERSION_Identifier}" | cut -d" " -f 3 | tr -d '\r\n,'`
     ADDRCODE_VAR=`cat $1 | tr -s ' ' | grep "\#define ${ADDRCODE_Identifier}" | cut -d" " -f 3 | tr -d '\r\n,'`
     ADDRDATA_VAR=`cat $1 | tr -s ' ' | grep "\#define ${ADDRDATA_Identifier}" | cut -d" " -f 3 | tr -d '\r\n,'`
     CRT0_VAR=`cat $1 | tr -s ' ' | grep "\#define ${CRT0_Identifier}" | cut -d" " -f 3 | tr -d '\r\n,'`
@@ -414,7 +414,7 @@ fi
 
 rm ${PARRENT_DIR}/${prog}.${EXTENSION}
 rm ${PARRENT_DIR}/${prog}.asm
-#rm ${PARRENT_DIR}/${prog}.ihx
+rm ${PARRENT_DIR}/${prog}.ihx
 rm ${PARRENT_DIR}/${prog}.lk
 rm ${PARRENT_DIR}/${prog}.lst
 rm ${PARRENT_DIR}/${prog}.map

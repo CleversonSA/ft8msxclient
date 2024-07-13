@@ -95,7 +95,6 @@ unsigned char InitializeTCPIP ()
         }
 #ifdef UNAPIHELPER_VERBOSE
         sprintf(chHelperString," v%u.%u\r\n", btVersionMain, btVersionSec);
-        Print("Opa ola eu aqui");
         Print(chHelperString);
 #endif
     }
