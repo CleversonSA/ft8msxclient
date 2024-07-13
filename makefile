@@ -8,11 +8,11 @@ HEX2BIN= hex2bin
 EXTENSION= COM
 DEFAULT_HEX2BIN_SIZE=
 
-CC = /usr/bin/sdcc
+CC = sdcc
 
 all: ft8msxcl.c
 	-make clean
-	-$(CC) $(CFLAGS) $(HEADERS) --out-fmt-ihx fusion-c/include/printf.rel -o UnapiHelper.rel -c UnapiHelper.c
+	-$(CC) $(CFLAGS) $(HEADERS)  fusion-c/include/printf.rel -o UnapiHelper.rel -c UnapiHelper.c
 	-$(CC) $(CFLAGS) $(HEADERS) --out-fmt-ihx fusion-c/include/printf.rel fusion-c/include/crt0_msxdos_advanced.rel UnapiHelper.rel ft8msxcl.c -o ft8msxcl.ihx
 	-${HEX2BIN} -e ${EXTENSION} ${DEFAULT_HEX2BIN_SIZE} ft8msxcl.ihx
 	-rm ./dsk/dska/ft8msxcl.*

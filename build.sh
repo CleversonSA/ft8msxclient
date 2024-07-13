@@ -334,10 +334,10 @@ if [ "${EXTENSION}" = "ROM" ];
 then 
     # pre-compilation
     sdcc -c -mz80 ${prog}.c -I ${HEADER_DIR} 
-    CCFLAGS="-o ${prog}.ihx --sdcccall 0 --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.rel"
+    CCFLAGS="-o ${prog}.ihx --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.rel"
     CARTRIDGE_SLOT_A=" -carta ${DEST}${prog}.${EXTENSION}"
 else
-    CCFLAGS="--sdcccall 0 --code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.c"
+    CCFLAGS="--code-loc ${ADDR_CODE} --data-loc ${ADDR_DATA} --disable-warning 196 -mz80 --no-std-crt0 ${CODEPRIO} ${LIB_FILE} -L ${LIB_DIR} -I ${HEADER_DIR} ${CRT0} ${INC1} ${INC2} ${INC3} ${INC4} ${INC5} ${INC6} ${INC7} ${INC8} ${INC9} ${prog}.c"
 fi
 
 echo "[1/5]... ${CC} is Processing '$1' ... "
