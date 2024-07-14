@@ -10,28 +10,39 @@ DEFAULT_HEX2BIN_SIZE=
 
 CC = sdcc
 
-all: ft8msxcl.c
-	-make clean
+all: clean clean-binaries build check binaries clean
+
+
+build:
 	-$(CC) $(CFLAGS) $(HEADERS)  fusion-c/include/printf.rel -o UnapiHelper.rel -c UnapiHelper.c
 	-$(CC) $(CFLAGS) $(HEADERS) --out-fmt-ihx fusion-c/include/printf.rel fusion-c/include/crt0_msxdos_advanced.rel UnapiHelper.rel ft8msxcl.c -o ft8msxcl.ihx
-	-${HEX2BIN} -e ${EXTENSION} ${DEFAULT_HEX2BIN_SIZE} ft8msxcl.ihx
-	-rm ./dsk/dska/ft8msxcl.*
-	-rm ./dsk/dska/UnapiHelper.*
+	
+
+binaries: hex
 	-cp ft8msxcl.COM ./dsk/dska
 	-cp ft8msxcl.COM ./dist
 
 
+hex:
+	-${HEX2BIN} -e ${EXTENSION} ${DEFAULT_HEX2BIN_SIZE} ft8msxcl.ihx
+
+
+check: UnapiHelper.rel ft8msxcl.ihx
+
+clean-binaries:
+	-rm -f ./dsk/dska/ft8msxcl.COM
+	-rm -f ./dsk/dska/UnapiHelper.*
+	-rm -f ./dsk/dist/ft8msxcl.COM
+
+
 clean:
-	-rm *.rel
-	-rm *.com 
-	-rm *.COM 
-	-rm *.lst
-	-rm *.noi
-	-rm *.sym
-	-rm *.ihx
-	-rm *.map
-	-rm *.lk
-	-rm *.asm
-	-rm ./dsk/dska/ft8msxcl.COM
-	-rm ./dsk/dska/UnapiHelper.*
-	-rm ./dist/ft8msxcl.COM
+	-rm -f *.rel
+	-rm -f *.com 
+	-rm -f *.COM 
+	-rm -f *.lst
+	-rm -f *.noi
+	-rm -f *.sym
+	-rm -f *.ihx
+	-rm -f *.map
+	-rm -f *.lk
+	-rm -f *.asm

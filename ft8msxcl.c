@@ -216,13 +216,13 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
       if (beeps == 1) {
         
         beeps = 0;
-        Locate(1,24);
+        Locate(1,22);
         Print("** BEEPS DISABLED **");
 
       } else {
 
         beeps = 1;
-        Locate(1,24);
+        Locate(1,22);
         Print("** BEEPS ENABLED **");
         Beep();
 
@@ -237,7 +237,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
       if (autoUpdate == 1) {
         
         autoUpdate = 0;
-        Locate(1,24);
+        Locate(1,22);
         Print("** AUTO UPDATE DISABLED **");
         autoWaitCount = 0;
         Beep();
@@ -245,7 +245,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
       } else {
 
         autoUpdate = 1;
-        Locate(1,24);
+        Locate(1,22);
         Print("** AUTO UPDATE ENABLED **");
         autoWaitCount = 0;
         Beep();
@@ -260,7 +260,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
 
       sendCommand(ucConnNumber, "wipe\n\r");
       
-      Locate(1,24);
+      Locate(1,22);
       Print("** WIPE LIST REQUESTED **");
       Beep();
 
@@ -275,7 +275,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
         cqOnly = 1;
         sendCommand(ucConnNumber, "cqonlyenabled\n\r");
         
-        Locate(1,24);
+        Locate(1,22);
         Print("** CQ ONLY FILTER ENABLED **");
         Beep();
 
@@ -288,7 +288,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
         cqOnly = 0;
         sendCommand(ucConnNumber, "cqonlydisabled\n\r");
         
-        Locate(1,24);
+        Locate(1,22);
         Print("** CQ ONLY FILTER DISABLED **");
         Beep();
 
@@ -304,7 +304,7 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
 
    } else {
 
-      Locate(1,24);
+      Locate(1,22);
       Print("** INVALID COMMAND KEY **");
       Beep();
 
@@ -320,7 +320,7 @@ void parseReturnData(unsigned char* bufferData, unsigned int bufferSize)
   if (strcmp(bufferData, "EMPTY\n\r") == 0) {
   
     clearLineStatus();
-    Locate(1,24);
+    Locate(1,22);
     Print("** NO NEW ENTRIES! **");
     beep();
     return;
@@ -331,7 +331,7 @@ void parseReturnData(unsigned char* bufferData, unsigned int bufferSize)
   {
   
     clearLineStatus();
-    Locate(1,24);
+    Locate(1,22);
     Print("** NO DATA RECEIVED! **");
     beep();
     return;
@@ -370,7 +370,7 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
     //     1234567890123456789012345678901234567890
     Print("                                        ");
 
-    if (line % 23 == 0) {
+    if (line % 21 == 0) {
       prepareScreen();
       Locate(0,3);
       //     1234567890123456789012345678901234567890
@@ -480,7 +480,7 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
 
 void clearLineStatus()
 {
-  Locate(0,24);
+  Locate(0,22);
   //     1234567890123456789012345678901234567890
   Print("                                       ");
 }
