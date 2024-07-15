@@ -124,6 +124,19 @@ If you wanna improve the project, I'll notice you that compile and run in a emul
         sdar -d z80.lib getchar.rel
         sdar -d z80.lib putchar.rel
 
+    9) Install hex2bin to convert Intel Hex to Z80:
+
+        - Download hex2bin sources: https://sourceforge.net/projects/hex2bin/files/hex2bin/Hex2bin-2.5.tar.bz2/download
+
+        - Extract files:
+
+            tar -xvf Hex2bin-2.5.tar.bz2
+
+        - Compile it
+
+            cd Hex2bin-2.5.tar.bz2
+            make
+            sudo make install
 
     NOW YOU ARE ABLE TO COMPILE THE FT8MSXCLIENT APP, IT COULD BE USED TO ANY MSX APP YOU COULD CREATE AT FUTURE:
 
