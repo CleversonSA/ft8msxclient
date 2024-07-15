@@ -10,7 +10,7 @@ DEFAULT_HEX2BIN_SIZE=
 
 CC = sdcc
 
-all: clean clean-binaries build check binaries clean
+all: clean clean-binaries build check binaries
 
 
 build:
@@ -21,6 +21,7 @@ build:
 binaries: hex
 	-cp ft8msxcl.COM ./dsk/dska
 	-cp ft8msxcl.COM ./dist
+	-make clean
 
 
 hex:

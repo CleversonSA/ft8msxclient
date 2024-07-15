@@ -48,6 +48,7 @@ Z80_registers regs; //auxiliary structure for asm function calling
 #define AUTO_WAIT_CYCLES 512
 unsigned char autoUpdate = 1;
 unsigned char beeps = 1;
+unsigned char scrolling = 1;
 unsigned char cqOnly = 0;
 unsigned int  autoWaitCount = 0;
 
@@ -188,8 +189,8 @@ void prepareScreen()
 {
   Cls();
   //       1234567890123456789012345678901234567890
-  Print("\fFT8MSXClient                    v0.4\r\n");
-  Print(  "------------------------------------\r\n");
+  Print("\fFT8MSXClient                     v0.5.1\r\n");
+  Print(  "---------------------------------------\r\n");
 }
 
 
@@ -210,6 +211,37 @@ unsigned char interpretKey(unsigned char ucConnNumber, unsigned char char2Send)
 {
 
    clearLineStatus();
+
+	 if (char2Send == 'p' || char2Send == 'P') {
+			
+			if (scrolling == 1) {
+				
+				scrolling = 0;			
+				Locate(1,22);
+				Print ("** PAGE SCROLL DISABLED **");
+				Beep();
+
+			} else {
+				
+				scrolling = 1;
+				Locate(1,22);
+				Print("** PAGE SCROLL ENABLED **");
+				Beep();
+
+			}
+			return 0;
+
+	 }
+
+
+	 if (char2Send == 'r' || char2Send == 'R') {
+
+			prepareScreen();
+			Beep();
+			return 0;
+
+	 }
+
    
    if (char2Send == 'b' || char2Send == 'B') {
 
@@ -370,7 +402,8 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
     //     1234567890123456789012345678901234567890
     Print("                                        ");
 
-    if (line % 21 == 0) {
+    if (line % 21 == 0 && scrolling == 1) {
+
       prepareScreen();
       Locate(0,3);
       //     1234567890123456789012345678901234567890
@@ -379,7 +412,12 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
       Print("---+-----+----+----------+-------+------");
       line = 5;
       Locate(1,line);
-    } 
+
+    } else if (line % 21 == 0) {
+
+			break;
+
+		}
 
     //Timestamp(ignored)
     field = strtok(NULL, ";");
