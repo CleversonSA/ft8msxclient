@@ -26,6 +26,14 @@ FT8MSXCL.COM <FT8MODEM SERVER IP> 6666
 
 ## Client keyboard shortcut commands
 ```
+ - 'r' key
+    
+    Clean and redraw the screen
+
+ - 's' key
+
+    Enable/Disable page scroll when many activity list. If enabled, only the first page will be shown and refreshed 
+
  - 'w' key
 
     Request to wipe the log list from server (better for reading)
