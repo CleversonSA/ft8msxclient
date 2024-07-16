@@ -189,7 +189,7 @@ void prepareScreen()
 {
   Cls();
   //       1234567890123456789012345678901234567890
-  Print("\fFT8MSXClient                     v0.5.1\r\n");
+  Print("\fFT8MSXClient                     v0.5.2\r\n");
   Print(  "---------------------------------------\r\n");
 }
 
@@ -386,15 +386,17 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
   //prepareScreen();
   char *field = strtok(bufferData,";");
   char fmtedField[16];
+	char tmpCompare[5];
 
   fmtedField[0] = '\0';
   int line = 5;
+	char isCQ = 0;
 
   Locate(0,3);
   //     1234567890123456789012345678901234567890
-  Print("dB    dT  Freq SR CallSg DS CallS GS-RST");
+  Print("dB    dT  Freq CQ FROM    TO      GS-RST");
   Locate(0,4);
-  Print("---+-----+----+----------+-------+------");
+  Print("---+-----+----+--+-------+-------+------");
 
   while (field != 0)
   {
@@ -406,10 +408,10 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
 
       prepareScreen();
       Locate(0,3);
-      //     1234567890123456789012345678901234567890
-      Print("dB    dT  Freq SR CallSg DS CallS GS-RST");
-      Locate(0,4);
-      Print("---+-----+----+----------+-------+------");
+      //     0123456789012345678901234567890123456789
+      Print("dB    dT  Freq CQ FROM    TO      GS-RST");
+			Locate(0,4);
+			Print("---+-----+----+--+-------+-------+------");
       line = 5;
       Locate(1,line);
 
@@ -469,11 +471,27 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
       
       //Souce Call Sign or CQ
       sprintf(fmtedField, "%s", field);
-      Locate(15,line);
-      Print(fmtedField);
-      Locate(25,line);
-      Print("|");
+			strncpy(tmpCompare, fmtedField,3);
+			
+			if (strcmp(tmpCompare, "CQ") == 0) {
+				
+				Locate(15,line);
+				Print("CQ");
+				Locate(17,line);
+				Print("|");
+				Locate(25,line);
+				Print("|");
+				isCQ = 1;
 
+			} else {
+ 
+				Locate(17,line);
+				Print("|");
+ 	    	Print(fmtedField);
+ 	  	  Locate(25,line);
+  	    Print("|");
+
+			}
       field = strtok(NULL, ";");
 
     }
@@ -482,12 +500,24 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
     if (field != 0)
     {
       
-      //Destination Call Sign
-      sprintf(fmtedField, "%s", field);
-      Locate(26,line);
-      Print(fmtedField);
-      Locate(33,line);
-      Print("|");
+      //Destination Call Sign or from CQ
+      if (isCQ == 1) {
+				
+				Locate(18,line);
+				sprintf(fmtedField, "%s", field);
+				Print(fmtedField);
+				Locate(33,line);
+				Print("|");
+
+			} else {
+
+	      sprintf(fmtedField, "%s", field);
+  	    Locate(26,line);
+    	  Print(fmtedField);
+      	Locate(33,line);
+      	Print("|");
+
+			}
 
       field = strtok(NULL, ";");
 
@@ -510,7 +540,7 @@ void parseFT8RecData(unsigned char*bufferData, unsigned int bufferSize) {
 
     beep();
     line++;
-
+		isCQ=0;
   }
 
 }
