@@ -87,7 +87,7 @@ If you wanna improve the project, I'll notice you that compile and run in a emul
     2) Check you have installed the following packages:
 
         sudo apt update
-        sudo apt install build-essential cmake git autoconf bison flex texinfo
+        sudo apt install build-essential cmake git autoconf bison flex texinfo gputils 
 
     3) Unzip the source:
 
@@ -122,7 +122,7 @@ If you wanna improve the project, I'll notice you that compile and run in a emul
 
         sudo su
 
-        cd /usr/share/sdcc/lib/z80/
+        cd /usr/local/share/sdcc/lib/z80/
 
         cp z80.lib z80.lold
 
@@ -142,7 +142,11 @@ If you wanna improve the project, I'll notice you that compile and run in a emul
 
         - Compile it
 
-            cd Hex2bin-2.5.tar.bz2
+            cd Hex2bin-2.5
+            vi Makefile
+            Change the CPFLAGs line to this:
+              CPFLAGS = -std=c99 -O2 -Wall -pedantic -fcommon
+            Hit ESC and type ":wq". Hit ENTER AGAIN
             make
             sudo make install
 
