@@ -54,6 +54,11 @@
 #define __CHARMAP_GRPBOX_BOTTOM_LEFT_ 0xf4
 #define __CHARMAP_GRPBOX_BOTTOM_RIGHT_ 0xf5
 
+// Hourglass
+#define __CHARMAP_HOURGLASS_1_ 0xfb
+#define __CHARMAP_HOURGLASS_2_ 0xfc
+#define __CHARMAP_HOURGLASS_3_ 0xfd
+
 // Defines in linear mode the X and Y coordinates for Vpoke
 #define __CHARMAP_SCREEN_WIDTH__ 40
 #define __CHARMAP_SCREEN_LINES__ 23

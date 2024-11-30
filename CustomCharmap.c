@@ -277,6 +277,78 @@ void InitCustomCharmap()
         Vpoke(__CHARMAP_VRAM_INIT_ADDR__ + ((__CHARMAP_VRAM_CHARPOS_GRP_START__ + grpCharPos) * 8) + grpPos, grpChar[grpPos]);
     }
 
+    // Define graph caracter for houglass 1
+    // 11111100 = -4
+    // 01111000 = 120
+    // 01111000 = 120
+    // 00110000 = 48
+    // 00110000 = 48
+    // 01001000 = 72
+    // 01001000 = 72
+    // 11111100 = -4
+    grpChar[0] = -4;
+    grpChar[1] = 120;
+    grpChar[2] = 120;
+    grpChar[3] = 48;
+    grpChar[4] = 48;
+    grpChar[5] = 72;
+    grpChar[6] = 72;
+    grpChar[7] = -4;
+    grpPos = 0;
+    grpCharPos = 10;
+    for (grpPos = 0; grpPos < 8; grpPos++)
+    {
+        Vpoke(__CHARMAP_VRAM_INIT_ADDR__ + ((__CHARMAP_VRAM_CHARPOS_GRP_START__ + grpCharPos) * 8) + grpPos, ~grpChar[grpPos]);
+    }
+
+    // Define graph caracter for hourglass 2
+    // 11111100 = -4
+    // 01001000 = 72
+    // 01111000 = 120
+    // 00110000 = 48
+    // 00110000 = 48
+    // 01001000 = 72
+    // 01111000 = 120
+    // 11111100 = -4
+    grpChar[0] = -4;
+    grpChar[1] = 72;
+    grpChar[2] = 120;
+    grpChar[3] = 48;
+    grpChar[4] = 48;
+    grpChar[5] = 72;
+    grpChar[6] = 120;
+    grpChar[7] = -4;
+    grpPos = 0;
+    grpCharPos = 11;
+    for (grpPos = 0; grpPos < 8; grpPos++)
+    {
+        Vpoke(__CHARMAP_VRAM_INIT_ADDR__ + ((__CHARMAP_VRAM_CHARPOS_GRP_START__ + grpCharPos) * 8) + grpPos, ~grpChar[grpPos]);
+    }
+
+    // Define graph caracter for hourglass 3
+    // 11111100 = -4
+    // 01001000 = 72
+    // 01001000 = 72
+    // 00110000 = 48
+    // 00110000 = 48
+    // 01111000 = 120
+    // 01111000 = 120
+    // 11111100 = -4
+    grpChar[0] = -4;
+    grpChar[1] = 72;
+    grpChar[2] = 72;
+    grpChar[3] = 48;
+    grpChar[4] = 48;
+    grpChar[5] = 120;
+    grpChar[6] = 120;
+    grpChar[7] = -4;
+    grpPos = 0;
+    grpCharPos = 12;
+    for (grpPos = 0; grpPos < 8; grpPos++)
+    {
+        Vpoke(__CHARMAP_VRAM_INIT_ADDR__ + ((__CHARMAP_VRAM_CHARPOS_GRP_START__ + grpCharPos) * 8) + grpPos, ~grpChar[grpPos]);
+    }
+
     // Copy the first char characters blocks to end of charmap table (almost end)
     // inverting the bit pattern of each char
     col = 0;
