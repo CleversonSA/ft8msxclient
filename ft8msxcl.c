@@ -345,7 +345,7 @@ void prepareScreen()
   ClsCC();
   //             1234567890123456789012345678901234567890
   LocateCC(0, 0);
-  PrintInverted(" FT8MSXClient                   v0.6.0  ");
+  PrintInverted(" FT8MSXClient                   v0.6.1  ");
   for (char y = 1; y < __CHARMAP_SCREEN_LINES__ - 1; y++)
   {
     Locate(0, y);
