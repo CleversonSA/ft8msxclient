@@ -1,5 +1,5 @@
-machine "Gradiente_Expert_Plus"
+machine "CIEL_Expert-Turbo"
 ext DDX_3.0
-ext rs232
-diska dsk/dska/.
+extb nextor
+diska dsk\\dska
 set sound_driver null

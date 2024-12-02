@@ -36,10 +36,11 @@
 
 #ifndef _UNAPIHELPER_HEADER_INCLUDED
 #define _UNAPIHELPER_HEADER_INCLUDED
-//Comment the define bellow if you do not want messages printed by this code
-#define UNAPIHELPER_VERBOSE
+// Comment the define bellow if you do not want messages printed by this code
+// #define UNAPIHELPER_VERBOSE
 
-enum TcpipUnapiFunctions {
+enum TcpipUnapiFunctions
+{
     UNAPI_GET_INFO = 0,
     TCPIP_GET_CAPAB = 1,
     TCPIP_NET_STATE = 3,
@@ -54,7 +55,8 @@ enum TcpipUnapiFunctions {
     TCPIP_WAIT = 29
 };
 
-enum TcpipErrorCodes {
+enum TcpipErrorCodes
+{
     ERR_OK = 0,
     ERR_NOT_IMP,
     ERR_NO_NETWORK,
@@ -91,7 +93,7 @@ void Breath();
 //
 // Return 0 if no TCP-IP Unapi implementation found
 // Return 1 if a TCP-IP Unapi implementation has been found
-unsigned char InitializeTCPIP ();
+unsigned char InitializeTCPIP();
 
 // OpenSingleConnection
 //
@@ -100,20 +102,20 @@ unsigned char InitializeTCPIP ();
 //
 // If connection is succesful will return connection number in uchConn and
 // return ERR_OK
-unsigned char OpenSingleConnection (unsigned char * uchHost, unsigned char * uchPort, unsigned char * uchConn);
+unsigned char OpenSingleConnection(unsigned char *uchHost, unsigned char *uchPort, unsigned char *uchConn);
 
 // CloseConnection
 //
 // Will request connection ucConnNumber to be closed
 //
 // Will return ERR_OK if success
-unsigned char CloseConnection (unsigned char ucConnNumber);
+unsigned char CloseConnection(unsigned char ucConnNumber);
 
 // IsConnected
 //
 // Return 1 if ucConnNumber connection state is established
 // Return 0 otherwise
-unsigned char IsConnected (unsigned char ucConnNumber);
+unsigned char IsConnected(unsigned char ucConnNumber);
 
 // RXData
 //
@@ -122,21 +124,21 @@ unsigned char IsConnected (unsigned char ucConnNumber);
 // Return 0 and uiSize = 0 if no data
 // Return 1 and uiSize = bytes read if data was available
 // ucWaitAllDataReceived has no effects on this interface, it nevers wait for all data
-unsigned char RXData (unsigned char ucConnNumber, unsigned char * ucBuffer, unsigned int * uiSize, unsigned char ucWaitAllDataReceived);
+unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived);
 
 // TXByte
 //
 // Will try to send uchByte in ucConnNumber
 //
 // Return ERR_OK if success
-unsigned char TxByte (unsigned char ucConnNumber, unsigned char uchByte);
+unsigned char TxByte(unsigned char ucConnNumber, unsigned char uchByte);
 
 // TXData
 //
 // Will try to send uiDataSize bytes from lpucData in ucConnNumber
 //
 // Return ERR_OK if success
-unsigned char TxData (unsigned char ucConnNumber, unsigned char * lpucData, unsigned int uiDataSize);
+unsigned char TxData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize);
 
 // TXUnsafeData
 //
@@ -145,13 +147,13 @@ unsigned char TxData (unsigned char ucConnNumber, unsigned char * lpucData, unsi
 // Up to 128 bytes can be sent here
 //
 // Return ERR_OK if success
-unsigned char TxUnsafeData (unsigned char ucConnNumber, unsigned char * lpucData, unsigned int uiDataSize);
+unsigned char TxUnsafeData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize);
 
 // ResolveDNS
 //
 // Used by OpenSingleConnection
 //
 // If success return ERR_OK and resolved IP in ucIP[0]...[3]
-unsigned char ResolveDNS(unsigned char * uchHostString, unsigned char * ucIP);
+unsigned char ResolveDNS(unsigned char *uchHostString, unsigned char *ucIP);
 
-#endif //#ifndef _UNAPIHELPER_HEADER_INCLUDED
+#endif // #ifndef _UNAPIHELPER_HEADER_INCLUDED
