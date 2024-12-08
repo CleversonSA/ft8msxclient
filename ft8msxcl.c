@@ -27,6 +27,7 @@
 #include "CustomCharmap.h"
 
 #define __SDK_MSXVERSION__ 1
+#define __FT8MSXCLVERSION__ "0.7.0"
 
 //*******************************************************
 // UNAPI DEFINITIONS
@@ -34,7 +35,7 @@
 // IMPORTANT: You need to check the map compiler generates to make sure this
 // address do not overlap functions, variables, etc
 // UNAPI requires memory buffer @ 0x8000 or higher...
-#define RcvMemorySize 4096
+#define RcvMemorySize 2048
 unsigned char ucConnNumber = 1; // hold the connection number received by UnapiHelper
 // For data receive parsing
 unsigned char ucRcvData[128];
@@ -45,6 +46,7 @@ Z80_registers regs; // auxiliary structure for asm function calling
 //*******************************************************
 // GLOBAL DEFINITIONS
 //*******************************************************
+// Based on a default 3MHZ MSX (Brazilian Expert and Hotbit)
 #define AUTO_WAIT_CYCLES 512
 unsigned char autoUpdate = 1;
 unsigned char beeps = 1;
@@ -53,6 +55,8 @@ unsigned char cqOnly = 0;
 unsigned int autoWaitCount = 0;
 unsigned int emulatorMode = 0;
 unsigned char debugReceiveMode = 0;
+unsigned char isStreamInitialized = 0;
+unsigned char isStreamEnded = 0;
 
 //*******************************************************
 // PROTOTYPES
@@ -69,6 +73,8 @@ void sleep(int);
 void sleepTimeout(int);
 void showLineStatus(char *);
 void cleanLineTable(int);
+char *verifyBOF(char *);
+char *verifyEOF(char *);
 
 //*******************************************************
 // MAIN
@@ -121,6 +127,9 @@ int main(char **argv, int argc)
       emulatorMode = 1;
       //      strcpy(emulatedString, "1732214355;-15;0.1;1620;IS0SWW;PP5CF;GG52;1732213560;-18;0.2;1987;CQ;DX;NA;PY2CT;GG56;1732214325;-14;0.2;1621;IS0SWW;FPP5CF/P;GG52;1732214355;-15;0.1;1620;CQ;NA/KI;PP5CF;GG52;1732214160;-13;0.6;1512;IT9DID/P;PY2ROE/P;RR73;1732214100;-14;0.6;1513;CQ;PY2ROE;GG56;1732214070;-17;0.6;1513;CQ;PY2ROE;GG56;1732214040;-12;0.6;1513;CQ;PY2ROE;GG56;1732213980;-15;0.6;1514;CQ;PY2ROE;GG56;1732213965;-18;0.2;1322;A61SD;PY2NL;-11;1732213950;-20;0.6;1514;CQ;PY2ROE;GG56;1732213890;-15;0.6;1514;ZS6MJM;PY2ROE;RR73;1732213890;-16;0.2;1988;J88BTI;PY2CT;-11;1732213830;-17;0.2;1987;J88BTI;PY2CT;-11;1732213560;-18;0.2;1987;CQ;DX;NA;PY2CT;GG56;1732213830;-16;0.6;1515;G8BCG;PY2ROE;RR73;1732213740;-17;0.6;1514;ZS6MJM;PY2ROE;-12;1732213680;-18;0.6;1515;G8BCG;PY2ROE;RR73;1732213680;-16;0.2;1987;J88BTI;PY2CT;-14;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;J88BTI;PY2CT;-09;1732213560;-18;0.2;1987;CQ;DX;PY2CT;GG56;1732213560;-18;0.2;1987;CQ;DX;NA;PY2CT;GG56;1732213560;-18;0.2;1987;CQ;DX;PY9CT;GG46;");
       strcpy(emulatedString, "BOF;\n\r1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\n1732919115;-18;0.2;1554;CT7ATA;PY2ROE;RR73;\r\n1732914465;-18;0.2;2020;9M2RSI;PY2ATI;GG58;\r\n1732914015;-18;0.2;1041;CQ;PU9FDO;GG29;\r\n1732913955;-22;0.2;1040;CQ;PU9FDO;GG29;\r\n1732913685;-18;1.3;1731;KB2DJJ;PY2SAO;RR73;\r\n1732911255;-18;0.6;1628;8R1AK;PY1WL;GG87;\r\n1732911165;-18;0.6;1630;8R1AK;PY1WL;GG87;\r\n1732906935;-16;0.2;1487;AA1SU;PY2GZ;GG66;\r\n1732906905;-21;1.4;1737;CQ;PY2SAO;GG66;\r\n1732906635;-21;0.2;1484;AA1SU;PY2GZ;GG66;\r\n1732906575;-17;0.2;1484;SV2YC;PY2GZ;GG66;\r\n1732906545;-15;0.2;1484;XE1XZQ;PY2GZ;73;\r\n1732906515;-14;0.2;1484;XE1XZQ;PY2GZ;R-24;\r\n1732906485;-15;0.2;1485;XE1XZQ;PY2GZ;GG66;\r\n1732906335;-12;0.2;1485;GM0VRP;PY2GZ;R-23;\r\n1732906305;-19;0.2;1485;GM0VRP;PY2GZ;GG66;\r\n1732906170;-20;0.2;1487;CE2FME;PY2GZ;GG66;\r\n1732905945;-17;0.2;1487;AA1SU;PY2GZ;GG66;\r\n1732905675;-19;0.2;1484;KD4AVP;PY2GZ;GG66;\r\n1732905585;-19;0.2;1491;KE2APO;PY2GZ;GG66;\r\n1732905420;-16;0.2;1371;IT9DID;PY2GZ;73;\r\n1732905390;-20;0.2;1372;IT9DID;PY2GZ;R-13;\r\n1732905360;-20;0.2;1372;IT9DID;PY2GZ;GG66;\r\n1732905315;-21;0.2;1374;SV2YC;PY2GZ;GG66;\r\n1732905285;-20;0.2;1374;IK0HTP;PY2GZ;73;\r\n1732905225;-19;0.2;1374;IK0HTP;PY2GZ;GG66;\r\n1732904970;-20;0.2;1491;LU9RBE;PY2GZ;GG66;\r\n1732904655;-16;0.2;1371;EE3FJP;PY2GZ;GG66;\r\n1732904520;-18;0.2;1371;EB5BZM;PY2GZ;R-14;\r\n1732904490;-14;0.2;1371;EB5BZM;PY2GZ;GG66;\r\n1732904460;-16;0.2;1370;EB5BZM;PY2GZ;GG66;\r\n1732904415;-18;0.2;1371;G4IFX;PY2GZ;73;\r\n1732904355;-19;0.2;1370;G4IFX;PY2GZ;GG66;\r\n1732904310;-14;0.2;1371;LU9RBE;PY2GZ;GG66;\r\n1732903395;-15;0.6;1376;8R1AK;PY2GZ;GG66;\r\n1732902405;-16;0.9;1738;CQ;PY2SAO;GG66;\r\n1732901505;-20;0.9;1739;CQ;PY2SAO;GG66;\r\n1732901235;-20;0.9;1740;CQ;PY2SAO;GG66;\r\n1732901205;-21;0.8;1740;CQ;PY2SAO;GG66;\r\n1732901175;-20;0.8;1739;CQ;PY2SAO;GG66;\r\n1732897980;-19;0.3;2042;IK7IMO;PY2LSW;RR73;\r\n1732897950;-19;0.4;2042;IK7IMO;PY2LSW;-22;\r\nEOF;\n\r");
+      // strcpy(emulatedString, "BOF;\n\r1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\nEOF;\n\rBOF;\n\r1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\nEOF;\n\r");
+      // strcpy(emulatedString, "BOF;\n\r1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\nEOF;\n\r");
+      // strcpy(emulatedString, ";GG56;\r\n1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\nEOF;\n\rBOF;\n\r1732919295;-17;0.2;1549;CQ;PY2ROE;GG56;\r\n1732919295;-17;0.2;1549;CQ;PY2ROE");
     }
     else
     {
@@ -192,12 +201,12 @@ int main(char **argv, int argc)
       Breath();
     }
     ucTxData = Inkey();
+    PrintChar(0);
 
     if (ucTxData ||
-        (autoUpdate == 1 && (autoWaitCount > AUTO_WAIT_CYCLES)))
+        (autoUpdate == 1 && (autoWaitCount > (AUTO_WAIT_CYCLES * 5))))
     {
-
-      if (autoWaitCount > AUTO_WAIT_CYCLES)
+      if (autoWaitCount > (AUTO_WAIT_CYCLES * 5))
       {
         // Auto update command
         ucTxData = 'U';
@@ -345,7 +354,12 @@ void prepareScreen()
   ClsCC();
   //             1234567890123456789012345678901234567890
   LocateCC(0, 0);
-  PrintInverted(" FT8MSXClient                   v0.6.1  ");
+  PrintInverted("                                        ");
+  LocateCC(0, 0);
+  PrintInverted(" FT8MSXClient");
+  LocateCC(__CHARMAP_SCREEN_WIDTH__ - 6, 0);
+  PrintInverted(__FT8MSXCLVERSION__);
+
   for (char y = 1; y < __CHARMAP_SCREEN_LINES__ - 1; y++)
   {
     Locate(0, y);
@@ -674,39 +688,27 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
   char *field = strtok(bufferData, ";");
   char fmtedField[16];
   char tmpCompare[5];
+  char page = 1;
 
   fmtedField[0] = '\0';
   int line = 3;
-  char isStreamInitialized = 0;
+  isStreamInitialized = 0;
+  isStreamEnded = 0;
   char isCQ = 0;
 
   printTableHeader();
 
-  while (field != 0 && strcmp(field, "EOL") != 0)
+  while (field != 0)
   {
-    if (field != 0 && strcmp(field, "BOF") == 0)
-    {
-      if (isStreamInitialized == 1)
-      {
-        showLineStatus("** IGNORING GARBAGE DATA **");
-        sleep(1);
-        break;
-      }
-      else
-      {
-        isStreamInitialized = 1;
-        field = strtok(NULL, ";");
-      }
-    }
 
     if (line == 22 && scrolling == 1)
     {
-      showLineStatus("Press any key to next page or wait...");
-      sleepTimeout(2);
+      sleep(2);
       prepareScreen();
       printTableHeader();
       line = 3;
       Locate(1, line);
+      page++;
     }
     else if (line == 22)
     {
@@ -714,8 +716,32 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
     }
     cleanLineTable(line);
 
-    // Timestamp(ignored)
-    field = strtok(NULL, ";");
+    field = verifyBOF(field);
+    if (field == 0)
+    {
+      showLineStatus("CORRUPTED DATA RECEIVED, IGNORING...");
+      sleep(1);
+      break;
+    }
+    field = verifyEOF(field);
+    if (field == 0)
+    {
+      break;
+    }
+
+    if (isStreamInitialized)
+      // Timestamp(ignored)
+      field = strtok(NULL, ";");
+    field = verifyBOF(field);
+    if (field == 0)
+    {
+      break;
+    }
+    field = verifyEOF(field);
+    if (field == 0)
+    {
+      break;
+    }
 
     if (field != 0)
     {
@@ -726,6 +752,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
       Print(fmtedField);
 
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     if (field != 0)
@@ -737,6 +773,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
       Print(fmtedField);
 
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     if (field != 0)
@@ -748,6 +794,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
       Print(fmtedField);
 
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     if (field != 0)
@@ -770,6 +826,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
         Print(fmtedField);
       }
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     if (field != 0)
@@ -784,10 +850,30 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
           Locate(15, line);
           Print("DX");
           field = strtok(NULL, ";");
+          field = verifyBOF(field);
+          if (field == 0)
+          {
+            break;
+          }
+          field = verifyEOF(field);
+          if (field == 0)
+          {
+            break;
+          }
           sprintf(fmtedField, "%s", field);
           if (strlen(fmtedField) < 4)
           {
             field = strtok(NULL, ";");
+            field = verifyBOF(field);
+            if (field == 0)
+            {
+              break;
+            }
+            field = verifyEOF(field);
+            if (field == 0)
+            {
+              break;
+            }
             sprintf(fmtedField, "%s", field);
           }
           Locate(27, line);
@@ -804,6 +890,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
           Print(fmtedField);
 
           field = strtok(NULL, ";");
+          field = verifyBOF(field);
+          if (field == 0)
+          {
+            break;
+          }
+          field = verifyEOF(field);
+          if (field == 0)
+          {
+            break;
+          }
           sprintf(fmtedField, "%s", field);
           Locate(27, line);
           Print(fmtedField);
@@ -822,6 +918,16 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
         Print(fmtedField);
       }
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     if (field != 0)
@@ -834,11 +940,23 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
       Print(fmtedField);
 
       field = strtok(NULL, ";");
+      field = verifyBOF(field);
+      if (field == 0)
+      {
+        break;
+      }
+      field = verifyEOF(field);
+      if (field == 0)
+      {
+        break;
+      }
     }
 
     beep();
     line++;
     isCQ = 0;
+    sprintf(fmtedField, " Page %d", page);
+    showLineStatus(fmtedField);
   }
 
   if (line < 22)
@@ -849,8 +967,7 @@ void parseFT8RecData(unsigned char *bufferData, unsigned int bufferSize)
     }
   }
 
-  showLineStatus("Press any key to refresh or wait...");
-  sleepTimeout(2);
+  sleep(1);
   clearLineStatus();
 }
 
@@ -865,4 +982,56 @@ void clearLineStatus()
   LocateCC(0, 22);
   //             1234567890123456789012345678901234567890
   PrintInverted("                                        ");
+}
+
+char *verifyBOF(char *field)
+{
+  if (field != 0 && strstr(field, "BOF") != NULL)
+  {
+    if (isStreamInitialized == 1)
+    {
+      showLineStatus("** IGNORING GARBAGE DATA **");
+      sleep(1);
+      return 0;
+    }
+    else
+    {
+      isStreamInitialized = 1;
+      field = strtok(NULL, ";");
+      return field;
+    }
+  }
+
+  if (isStreamInitialized == 1)
+  {
+    return field;
+  }
+
+  return 0;
+}
+
+char *verifyEOF(char *field)
+{
+  if (field != 0 && strstr(field, "EOF") != NULL)
+  {
+    if (isStreamEnded == 1)
+    {
+      showLineStatus("** IGNORING END GARBAGE DATA **");
+      sleep(1);
+      return 0;
+    }
+    else
+    {
+      isStreamEnded = 1;
+      field = strtok(NULL, ";");
+      return field;
+    }
+  }
+
+  if (isStreamInitialized == 1 && isStreamEnded == 0)
+  {
+    return field;
+  }
+
+  return 0;
 }
